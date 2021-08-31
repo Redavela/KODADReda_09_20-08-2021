@@ -17,5 +17,13 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+    test("Then the loadingPage should be opened if the loading is true", () => {
+      const html = BillsUI({ data: bills, loading: true})
+      document.body.innerHTML = html;
+      const loaderPage = screen.getByTestId("layout-disconnect")
+      expect(loaderPage).toBeTruthy()
+      // console.log(loaderPage)
+    })
   })
 })
+
