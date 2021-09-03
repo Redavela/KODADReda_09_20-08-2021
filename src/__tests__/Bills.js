@@ -4,23 +4,29 @@ import { bills } from "../fixtures/bills.js"
 import localStorageMock from '../__mocks__/localStorage'
 import Bills from "../containers/Bills.js"
 import userEvent from "@testing-library/user-event"
-import { ROUTES } from "../constants/routes.js"
+import { ROUTES, ROUTES_PATH } from "../constants/routes.js"
 import firebase from "../__mocks__/firebase.js"
+import Firestore from "../app/Firestore"
+import  Router  from "../app/Router"
+
 
 const onNavigate = (pathname) => {
   document.body.innerHTML = ROUTES({ pathname })
 }
+Object.defineProperty(window, 'localeStorage', {value:localStorageMock})
+window.localStorage.setItem('user', JSON.stringify({type: 'Employee'}))
+
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", () => {
-      Object.defineProperty(window, 'localeStorage', {value:localStorageMock})
-      window.localStorage.setItem('user', JSON.stringify({type: 'Employee'}))
-      const html = BillsUI({data: bills})
-      document.body.innerHTML = html
-
-      const billIcon = screen.getByTestId('icon-window')
-      billIcon.classList.add('active-icon')
-      expect(billIcon.classList.contains('active-icon')).toBeTruthy()
+      Firestore.bills = () => ({
+        get: jest.fn().mockResolvedValue()
+      });
+      Object.defineProperty(window, "location", {value: {hash: ROUTES_PATH["Bills"]}});
+      document.body.innerHTML = '<div id="root"></div>';
+      Router();
+      const iconWindows = screen.getByTestId("icon-window");
+      expect(iconWindows.classList.contains("active-icon")).toBeTruthy()
     })
     test("Then bills should be ordered from earliest to latest", () => {
       const html = BillsUI({ data: bills })
@@ -46,7 +52,7 @@ describe("Given I am connected as an employee", () => {
 })
 
 
-describe('When i open a bill page',()=>{
+describe('Given i open a bill page',()=>{
   describe('when i click on the button to create a new bill',()=>{
     test('NexBill page should be open', () => {
       const html = BillsUI({ data: bills})
@@ -59,10 +65,11 @@ describe('When i open a bill page',()=>{
       userEvent.click(buttonNewBill)
       
       expect(handleClickButton).toHaveBeenCalled()
+      expect(screen.getAllByText('Envoyer une note de frais')).toBeTruthy()
       expect(screen.getByTestId('form-new-bill')).toBeTruthy()
     })
   })
-  describe('when i click on iconEye',()=>{
+  describe('Given when i click on iconEye',()=>{
     test('A modal should be open', () => {
       const html = BillsUI({ data: bills})
       document.body.innerHTML = html;
@@ -75,7 +82,6 @@ describe('When i open a bill page',()=>{
       iconEye.addEventListener('click', handleClickIcon)
       userEvent.click(iconEye)
       expect(handleClickIcon).toHaveBeenCalled()
-      // expect(screen.getByTestId('test-modaleFile')).toBeTruthy()
     })
   })
 })
