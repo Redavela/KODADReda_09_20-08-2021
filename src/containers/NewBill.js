@@ -18,8 +18,7 @@ export default class NewBill {
   handleChangeFile = e => {
     const input = this.document.querySelector(`input[data-testid="file"]`)
     const file = input.files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
+    const fileName = file.name;
     let isValideExt = ['png','jpg','jpeg'].includes(fileName.split('.').pop())
     if(isValideExt){
       this.firestore
@@ -37,7 +36,6 @@ export default class NewBill {
   }
   handleSubmit = e => {
     e.preventDefault()
-    console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,

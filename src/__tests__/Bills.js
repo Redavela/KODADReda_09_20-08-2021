@@ -6,8 +6,10 @@ import Bills from "../containers/Bills.js"
 import userEvent from "@testing-library/user-event"
 import { ROUTES, ROUTES_PATH } from "../constants/routes.js"
 import firebase from "../__mocks__/firebase.js"
-import Firestore from "../app/Firestore"
-import  Router  from "../app/Router"
+import Firestore from "../app/Firestore";
+import Router from "../app/Router";
+
+
 
 
 const onNavigate = (pathname) => {
@@ -15,7 +17,6 @@ const onNavigate = (pathname) => {
 }
 Object.defineProperty(window, 'localeStorage', {value:localStorageMock})
 window.localStorage.setItem('user', JSON.stringify({type: 'Employee'}))
-
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
     test("Then bill icon in vertical layout should be highlighted", () => {
@@ -96,6 +97,7 @@ describe("Given I am a user connected ", () => {
        expect(bills.data.length).toBe(4)
     })
     test("fetches bills from an API and fails with 404 message error", async () => {
+      
       firebase.get.mockImplementationOnce(() =>
         Promise.reject(new Error("Erreur 404"))
       )
@@ -105,6 +107,7 @@ describe("Given I am a user connected ", () => {
       expect(message).toBeTruthy()
     })
     test("fetches messages from an API and fails with 500 message error", async () => {
+      
       firebase.get.mockImplementationOnce(() =>
         Promise.reject(new Error("Erreur 500"))
       )
