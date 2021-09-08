@@ -5,7 +5,14 @@ export default class Logout {
     this.document = document
     this.onNavigate = onNavigate
     this.localStorage = localStorage
-    $('#layout-disconnect').click(this.handleClick)
+    if($ === undefined){
+      const layoutDisconnect = this.document.getElementById('layout-disconnect')
+      layoutDisconnect.addEventListener('click',this.handleClick)
+    }else{
+      $('#layout-disconnect').on('click',this.handleClick)
+    }
+    
+    
   }
   
   handleClick = (e) => {
